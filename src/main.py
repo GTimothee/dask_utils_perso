@@ -10,5 +10,5 @@ def main():
                        dtype="float16")
     on_hdd_on_ssd()
 
-if __name__ == "__main__":
+
     main()

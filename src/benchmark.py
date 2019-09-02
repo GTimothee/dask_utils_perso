@@ -280,3 +280,7 @@ def on_hdd_on_ssd(ssd=True, hdd=False):
         input_file_path = work_dir + "bbsamplesize.hdf5"
         bench_split_and_merge(hardware_type, work_dir, input_file_path, block_chunked_file_path)
     return
+
+
+if __name__ == "__main__":
+    print("benchmark")
