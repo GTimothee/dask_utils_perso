@@ -60,12 +60,12 @@ def save_arr(arr, storage_type, file_path, key='/data', axis=0, chunks_shape=Non
         if chunks_shape:
             da.to_hdf5(file_path, key, arr, chunks=chunks_shape)
         else:
-            da.to_hdf5(file_path, key, arr)
+            da.to_hdf5(file_path, key, arr, chunks=None)
     elif storage_type == "numpy":
         da.to_npy_stack(os.path.join(file_path, "npy/"), arr, axis=axis)
 
 
-def get_dask_array_from_hdf5(file_path="tests/data/sample.hdf5", cast=True, key='/data'):
+def get_dask_array_from_hdf5(file_path="tests/data/sample.hdf5", cast=True, key='/data', logic_chunks_shape="auto"):
     """
     file path: path to hdf5 file (string)
     key: key of the dictionary to retrieve data
@@ -78,7 +78,10 @@ def get_dask_array_from_hdf5(file_path="tests/data/sample.hdf5", cast=True, key=
         if not cast:
             return f[key]
         dataset = f[key]
-        return da.from_array(dataset, chunks=dataset.chunks)
+        if dataset.chunks:  # if dataset is chunked use the same logical chunks shape as physical chunks shape
+            return da.from_array(dataset, chunks=dataset.chunks)
+        else:  # if no physical chunked then should choose a chunks shape, "auto" is automatic ~100MB chunk size
+            return da.from_array(dataset, chunks=logic_chunks_shape)
     else:
         print('Key not found. Aborting.')
 
